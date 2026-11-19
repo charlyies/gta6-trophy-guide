@@ -1,6 +1,10 @@
+[![gta6-trophy-guide-01](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
+[![rank](https://make.fun/badge/gta6-trophy-guide-01/charlyies/gta6-trophy-guide/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
+[![reward](https://make.fun/badge/gta6-trophy-guide-01/charlyies/gta6-trophy-guide/reward.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
+
 # Leonida Ledger — Fourth Edition
 
-An offline guide and tracker for the 55 PlayStation 5 trophies of **Grand Theft Auto VI**, built for the make.fun bounty `gta6-trophy-guide-01`.
+An offline guide and tracker for the 55 PlayStation 5 trophies of **Grand Theft Auto VI**, built for the [make.fun bounty "Build the best GTA 6 trophy guide"](https://make.fun/bounty/gta6-trophy-guide-01) (`gta6-trophy-guide-01`).
 
 ## What it is
 
