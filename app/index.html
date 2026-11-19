@@ -3,92 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leonida Ledger — GTA VI Trophy Guide &amp; Tracker (Night Edition)</title>
-<meta name="description" content="An unofficial offline guide and tracker for all 55 PlayStation 5 trophies of Grand Theft Auto VI: cited guides, a platinum roadmap, missable flags, and a saved checklist.">
-<link rel="icon" href="data:,">
+<title>Leonida Ledger — GTA VI Trophy Guide &amp; Tracker</title>
+<meta name="description" content="Offline guide and tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5: cited guides, platinum roadmap, missable flags, checklist, export and import.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <p class="eyebrow">Grand Theft Auto VI &middot; PlayStation 5 &middot; Offline guide &amp; tracker</p>
+<header class="masthead">
+  <div class="masthead-text">
+    <p class="kicker">Grand Theft Auto VI · PlayStation 5 · Offline guide &amp; tracker</p>
     <h1>Leonida Ledger</h1>
-    <p class="tagline">Night Edition &mdash; every one of the 55 official trophies, with a guide in our own words that cites its sources, a roadmap to the platinum, and the missable trophies flagged.</p>
-    <p class="facts" id="factsLine">55 trophies &middot; 1 Platinum &middot; 2 Gold &middot; 6 Silver &middot; 46 Bronze &middot; 28 hidden &middot; 0 online &mdash; every trophy is single-player</p>
+    <p class="subtitle">Rebuilt Edition — every one of the 55 official trophies, with a guide in our own words that cites its sources, a roadmap to the platinum, and the missable trophies flagged.</p>
+    <p class="facts">55 trophies · 1 Platinum · 2 Gold · 6 Silver · 46 Bronze · 28 hidden · 0 online — every trophy is single-player</p>
   </div>
-  <div class="progressCard" id="progressCard" aria-live="polite">
-    <p class="bigCount"><span id="earnedCount">0</span> / 55</p>
-    <p class="progressLabel">trophies earned</p>
-    <div class="bar" role="progressbar" aria-label="Trophies earned" aria-valuemin="0" aria-valuemax="55" aria-valuenow="0" id="progressBarWrap"><div class="barFill" id="progressFill"></div></div>
-    <p class="gradeCounts" id="gradeCounts">0/1 platinum &middot; 0/2 gold &middot; 0/6 silver &middot; 0/46 bronze</p>
-    <p class="nextUp" id="nextUp">Next up: start the story.</p>
-    <button id="themeToggle" type="button" aria-pressed="true">☾ Dark theme — tap for light</button>
-  </div>
+  <section class="progress-card" aria-label="Progress">
+    <p class="big-count"><span id="earnedCount">0</span> / 55</p>
+    <p class="progress-label">trophies earned</p>
+    <div class="bar" role="progressbar" aria-label="Trophies earned" aria-valuemin="0" aria-valuemax="55" aria-valuenow="0" id="progressBar"><span id="progressFill"></span></div>
+    <p class="grade-counts" id="gradeCounts">0/1 platinum · 0/2 gold · 0/6 silver · 0/46 bronze</p>
+    <p class="next-up">Next up: <span id="nextUp">—</span></p>
+    <button id="themeToggle" type="button">☾ Dark theme — tap for light</button>
+  </section>
 </header>
-<nav class="tabs" aria-label="Guide sections">
-  <button type="button" class="tab active" data-view="tracker">Tracker</button>
-  <button type="button" class="tab" data-view="roadmap">Platinum Roadmap</button>
-  <button type="button" class="tab" data-view="missables">Missables ⚠</button>
-  <button type="button" class="tab" data-view="sources">Sources &amp; honesty</button>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" class="tab active" data-tab="tracker">Tracker</button>
+  <button type="button" class="tab" data-tab="roadmap">Platinum Roadmap</button>
+  <button type="button" class="tab" data-tab="missables">Missables ⚠</button>
+  <button type="button" class="tab" data-tab="sources">Sources &amp; honesty</button>
 </nav>
 
 <main>
-  <section id="view-tracker" class="view active" aria-label="Trophy tracker">
+  <section id="view-tracker" class="view active">
     <div class="controls">
-      <label class="searchLabel">Search <input id="search" type="search" placeholder="Trophy, mission, place…  ( / )" autocomplete="off"></label>
-      <label>Grade <select id="gradeFilter"><option value="all">All grades</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option></select></label>
-      <label>Show <select id="showFilter"><option value="all">All trophies</option><option value="earned">Earned only</option><option value="unearned">Not yet earned</option><option value="missable">Missable &amp; at-risk only</option></select></label>
-      <label class="checkLabel"><input id="spoilerToggle" type="checkbox" checked> Hide story spoilers</label>
-      <button id="exportBtn" type="button" class="primaryBtn">Export progress</button>
-      <label class="importBtn">Import progress <input id="importFile" type="file" accept="application/json,.json"></label>
+      <label class="field">Search
+        <input id="searchBox" type="search" placeholder="Trophy, mission, place…  ( / )" autocomplete="off">
+      </label>
+      <label class="field">Grade
+        <select id="gradeSelect">
+          <option value="all">All grades</option>
+          <option value="platinum">Platinum</option>
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="bronze">Bronze</option>
+        </select>
+      </label>
+      <label class="field">Show
+        <select id="showSelect">
+          <option value="all">All trophies</option>
+          <option value="earned">Earned only</option>
+          <option value="remaining">Not yet earned</option>
+        </select>
+      </label>
+      <label class="check"><input id="spoilerToggle" type="checkbox" checked> Hide story spoilers</label>
+      <button id="exportBtn" type="button" class="primary">Export progress</button>
+      <label class="import-btn">Import progress<input id="importFile" type="file" accept="application/json,.json"></label>
       <button id="resetBtn" type="button">Reset</button>
     </div>
-    <div class="kindChips" id="kindChips" role="group" aria-label="Filter by kind"></div>
-    <p class="showing" id="showingLine"></p>
-    <div class="trackerGrid">
-      <div class="listCol" id="trophyList" role="list" aria-label="Trophy list"></div>
-      <aside class="detailCol" id="detailPanel" aria-label="Selected trophy guide" aria-live="polite"></aside>
+    <div class="chips" id="kindChips" role="group" aria-label="Filter by kind"></div>
+    <p class="showing" id="showingLine">Showing 55 of 55 trophies · 0 earned in this view</p>
+    <div class="tracker-grid">
+      <div class="trophy-list" id="trophyList" role="list"></div>
+      <article class="detail" id="detailPanel" aria-live="polite"></article>
     </div>
   </section>
 
-  <section id="view-roadmap" class="view" aria-label="Roadmap to the platinum">
+  <section id="view-roadmap" class="view">
     <h2>Roadmap to the platinum</h2>
-    <p class="intro">Built from the official descriptions alone: play the story first, then the side stories, then crime and activities, then money and the odd moments, and finish with the 100% checklist. Only one trophy can truly be missed &mdash; see Missables. Everything else stays available after the credits, so there is no need to rush the free-roam grind while the story is still running.</p>
-    <p class="intro"><strong>Platinum time, as reported at launch:</strong> around 200 hours, most of it the 100% checklist. There are no difficulty trophies, no online trophies and no mission medals: the platinum is long, not hard. Keep cheats off your trophy save &mdash; cheats are reported to switch off trophies and saving.</p>
+    <p class="lede">Six stages, in the order to play them. Stage 1 is the story; the rest stays open after the credits. Around 200 hours in total, long rather than hard — no difficulty trophies, no online trophies, no mission medals.</p>
     <div id="roadmapStages"></div>
   </section>
 
-  <section id="view-missables" class="view" aria-label="Missable trophies">
-    <h2>Missable trophies</h2>
-    <p class="intro">Built from the official descriptions and the cited launch-day guide. The short version: keep a manual save at the start of every chapter and one from just before the final mission &mdash; there is no mission replay and no New Game Plus at launch.</p>
-    <div id="missableCards"></div>
-    <h3>Your save-slot plan</h3>
-    <ol class="savePlan">
-      <li>Save at the start of every chapter (the game has 15 manual save slots plus one autosave &mdash; rotate the rest).</li>
-      <li>In Chapter 1, do Lucia&rsquo;s balcony meditation before the chapter ends, and keep that Chapter 1 save until Positive Mental Attitude pops.</li>
-      <li>In Chapter 3, race Yago the moment his race appears (hourglass icon) &mdash; save first, then race.</li>
-      <li>Keep one untouched manual save from just before the final mission.</li>
-      <li>Never test cheats on your trophy save &mdash; use a throwaway save if you try them.</li>
-    </ol>
+  <section id="view-missables" class="view">
+    <h2>Missables &amp; at-risk trophies</h2>
+    <p class="lede">One trophy can truly be missed. One more is at risk if you leave a time-sensitive strand too late. Everything else stays available after the credits.</p>
+    <div id="missablesList"></div>
   </section>
 
-  <section id="view-sources" class="view" aria-label="Sources and honesty">
+  <section id="view-sources" class="view">
     <h2>Sources &amp; honesty</h2>
-    <p class="intro">GTA VI launched on 19 Nov 2026, the day this guide was written. Every trophy&rsquo;s name, description and grade is shown exactly as PlayStation publishes it. The launch-day methods are cited per trophy; where no source pins a place or method down, the guide says so plainly instead of inventing one.</p>
-    <ul class="sourceList">
-      <li><strong>Official names, descriptions, grades and PSN counts:</strong> Exophase &mdash; Grand Theft Auto VI Trophies (PS5), checked 19 Nov 2026; PSNProfiles &mdash; Grand Theft Auto VI Trophies, checked 19 Nov 2026. The two agreed on every name, description and grade: 55/55, 0 mismatches.</li>
-      <li><strong>Launch-day methods, chapter timing, missable warning and 100% checklist:</strong> OutputLag &mdash; GTA 6 Trophy List: All 55 Trophies and Achievements, 19 Nov 2026. Methods it marks unconfirmed are marked unconfirmed here too.</li>
-      <li><strong>Cross-checks on totals and the single missable:</strong> GamesRadar+, Press Start and PC Gamer (same 55, same grades); GTABase and PowerPyx (Positive Mental Attitude flagged as the only possibly missable trophy).</li>
-      <li><strong>What is not confirmed yet:</strong> five hidden trophies have no confirmed unlock method at launch &mdash; In The Beginning&hellip;, Capital Offense, Bad Luck, I Guess, The Truth Is Out There and Ten Pin. Their guides say so, and give the description as the only hint. Two more methods are reported but not confirmed: Personal Best (both characters at maximum Strength) and the strict-need question for the Chapter 1 balcony meditation.</li>
-    </ul>
-    <p class="intro">Not affiliated with Rockstar Games, Sony or PlayStation. No Rockstar logo or official artwork is used anywhere in this guide; the look is our own.</p>
-    <p class="intro">Offline by design: this page fetches only its own files (its stylesheet, its scripts and <code>data/trophies.json</code>). It makes no network request at run time.</p>
+    <p class="lede">Every guide on this page is written in our own words. The official trophy names, descriptions and grades are shown as PlayStation publishes them, and every guide names the source its facts come from.</p>
+    <div class="source-block">
+      <h3>Where the list comes from</h3>
+      <p>Names, descriptions, grades and hidden flags: the official PlayStation 5 list as published on Exophase and PSNProfiles, cross-checked live on 19 November 2026 via Planet GTA 6 and OutputLag. The two trackers agree on every name, description and grade: 55 trophies, 1 platinum, 2 gold, 6 silver, 46 bronze, 28 hidden, 0 online.</p>
+      <h3>Where the methods come from</h3>
+      <p>Launch-day methods are cited per trophy from the OutputLag GTA 6 trophy list of 19 November 2026, with cross-checks from Press Start (18 November 2026) and GGRecon (19 November 2026). Where OutputLag marks a method unconfirmed, this guide says so in plain words and does not pretend otherwise.</p>
+      <h3>What is not pinned down yet</h3>
+      <p>Six odd-moment trophies — In The Beginning…, Capital Offense, Bad Luck, I Guess, The Truth Is Out There and Ten Pin — have no confirmed unlock method at launch. Their guides say so honestly and give the best reading of the official description instead of inventing a method. Personal Best should pop when Jason and Lucia both reach maximum Strength, and the Chapter 1 balcony meditation counting toward Positive Mental Attitude is not confirmed either; both are marked as such.</p>
+      <h3>Save discipline</h3>
+      <p>There is no mission replay and no New Game Plus at launch. Keep a manual save at the start of every chapter and one untouched save from just before the final mission. The game has 15 manual save slots plus one autosave.</p>
+      <h3>Cheats</h3>
+      <p>PowerPyx reports that turning on a cheat disables trophies, and GameSpot and PC Gamer add that you cannot save once you have used one. Never use cheats on your trophy save.</p>
+      <h3>About this guide</h3>
+      <p>No Rockstar Games logo, artwork, box art or screenshot of the game is used anywhere in this guide. The look is our own. The guide works fully offline: it loads nothing over the network, and your progress is saved in your browser only.</p>
+    </div>
   </section>
 </main>
 
 <footer>
-  <p>Leonida Ledger, Night Edition (v2) &mdash; unofficial fan-made guide for the make.fun bounty <em>Build the best GTA 6 trophy guide</em> (gta6-trophy-guide-01). MIT licensed. Trophy names and descriptions &copy; PlayStation / Rockstar Games as published.</p>
+  <p>Leonida Ledger — Rebuilt Edition · Grand Theft Auto VI is developed and published by Rockstar Games. Trophy names and descriptions are PlayStation's official text. Guides are original writing. Works offline.</p>
 </footer>
+
 <script type="module" src="app.js"></script>
 </body>
 </html>
