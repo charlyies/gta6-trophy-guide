@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leonida Ledger — GTA VI Trophy Guide &amp; Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-text">
+    <p class="kicker">Grand Theft Auto VI · PlayStation 5 · Offline guide &amp; tracker</p>
+    <h1>Leonida Ledger</h1>
+    <p class="subtitle">Every one of the 55 official trophies, with its official name, description and grade, a guide in our own words that cites its sources, a roadmap to the platinum, and the missable trophies flagged.</p>
+    <p class="makeup" id="makeup">55 trophies · 1 Platinum · 2 Gold · 6 Silver · 46 Bronze · 28 hidden · 0 online — every trophy is single-player</p>
+  </div>
+  <div class="progress-card" id="progressCard">
+    <p class="big-count" id="bigCount">0 / 55</p>
+    <p class="big-label">trophies earned</p>
+    <div class="bar" aria-label="Progress"><div class="bar-fill" id="barFill"></div></div>
+    <p class="grade-counts" id="gradeCounts"></p>
+    <p class="next-up" id="nextUp"></p>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Views">
+  <button type="button" data-view="tracker" id="tabTracker">Tracker</button>
+  <button type="button" data-view="roadmap" id="tabRoadmap">Platinum Roadmap</button>
+  <button type="button" data-view="missables" id="tabMissables">Missables ⚠</button>
+  <button type="button" data-view="sources" id="tabSources">Sources &amp; honesty</button>
+</nav>
+
+<main>
+  <section id="viewTracker" class="view">
+    <div class="controls">
+      <label class="search-label">Search <input id="search" type="search" placeholder="Trophy, mission, place…  ( / )" autocomplete="off"></label>
+      <label>Grade <select id="gradeFilter"><option value="all">All grades</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option></select></label>
+      <label>Show <select id="earnedFilter"><option value="all">All trophies</option><option value="earned">Earned only</option><option value="todo">Not earned yet</option></select></label>
+      <label class="spoiler-label"><input id="spoilerToggle" type="checkbox" checked> Hide story spoilers</label>
+      <button id="exportBtn" type="button">Export progress</button>
+      <label class="import-label">Import progress <input id="importFile" type="file" accept="application/json,.json"></label>
+      <button id="resetBtn" type="button">Reset</button>
+    </div>
+    <div class="chips" id="kindChips" aria-label="Filter by kind"></div>
+    <p class="list-meta" id="listMeta"></p>
+    <div class="tracker-grid">
+      <div class="list-wrap">
+        <ol class="trophy-list" id="trophyList"></ol>
+      </div>
+      <aside class="detail" id="detailPane" aria-label="Trophy guide"></aside>
+    </div>
+  </section>
+
+  <section id="viewRoadmap" class="view" hidden>
+    <h2>Roadmap to the platinum</h2>
+    <p class="view-intro">Built from the official descriptions alone: play the story first, then the side stories, then crime and activities, then money and the odd moments, and finish with 100% completion. Only one trophy can be missed — see Missables. Everything else stays available after the credits.</p>
+    <div id="roadmapStages"></div>
+  </section>
+
+  <section id="viewMissables" class="view" hidden>
+    <h2>Missable trophies</h2>
+    <p class="view-intro">Built from the official descriptions and the cited launch-day guide. The short version: keep a manual save at the start of every chapter and one from just before the final mission — there is no mission replay and no New Game Plus.</p>
+    <div id="missableCards"></div>
+  </section>
+
+  <section id="viewSources" class="view" hidden>
+    <h2>Sources &amp; honesty</h2>
+    <div id="sourcesBody"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Leonida Ledger — an unofficial, fan-made guide. Not affiliated with Rockstar Games, Sony or PlayStation. No Rockstar logo or official artwork is used here. Trophy names and descriptions are shown as PlayStation publishes them; every guide is written in our own words for this entry. Works fully offline: this page fetches only its own files.</p>
+  <p>Built for the make.fun bounty “Build the best GTA 6 trophy guide” (gta6-trophy-guide-01).</p>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
