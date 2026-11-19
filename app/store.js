@@ -1,46 +1,76 @@
-// Leonida Ledger — saved progress, theme and notes. One localStorage key,
-// one plain JSON shape, so export and import are the same object the app
-// reads on load. Nothing here touches the network.
+// Leonida Ledger state: earned ticks, per-trophy notes, PSN counters, theme,
+// spoiler setting and filters, all saved in localStorage. Nothing here touches
+// the network; export and import are plain JSON files the reader controls.
 
-export const STORAGE_KEY = 'leonida-ledger-v3-progress';
-export const THEME_KEY = 'leonida-ledger-v3-theme';
+export const STORAGE_KEY = 'leonida-ledger-v4';
+
+const DEFAULT_STATE = {
+  earned: [],
+  notes: {},
+  counts: {},
+  theme: 'dark',
+  spoiler: true,
+  kind: 'all',
+  grade: 'all',
+  show: 'all',
+  query: '',
+  tab: 'tracker',
+  selected: null,
+};
 
 export function blankState() {
-  return { earned: [], notes: {}, spoiler: true, theme: 'dark', selected: null };
+  return {
+    earned: [],
+    notes: {},
+    counts: {},
+    theme: 'dark',
+    spoiler: true,
+    kind: 'all',
+    grade: 'all',
+    show: 'all',
+    query: '',
+    tab: 'tracker',
+    selected: null,
+  };
+}
+
+function cleanState(raw) {
+  const base = blankState();
+  if (!raw || typeof raw !== 'object') return base;
+  if (Array.isArray(raw.earned)) base.earned = raw.earned.filter((n) => typeof n === 'string');
+  if (raw.notes && typeof raw.notes === 'object') {
+    for (const [k, v] of Object.entries(raw.notes)) if (typeof v === 'string') base.notes[k] = v;
+  }
+  if (raw.counts && typeof raw.counts === 'object') {
+    for (const [k, v] of Object.entries(raw.counts)) {
+      const n = Number(v);
+      if (Number.isFinite(n) && n >= 0) base.counts[k] = Math.floor(n);
+    }
+  }
+  if (raw.theme === 'light' || raw.theme === 'dark') base.theme = raw.theme;
+  if (typeof raw.spoiler === 'boolean') base.spoiler = raw.spoiler;
+  for (const key of ['kind', 'grade', 'show', 'tab']) {
+    if (typeof raw[key] === 'string') base[key] = raw[key];
+  }
+  if (typeof raw.query === 'string') base.query = raw.query;
+  if (typeof raw.selected === 'string' || raw.selected === null) base.selected = raw.selected;
+  return base;
 }
 
 export function loadState() {
-  const state = blankState();
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return state;
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed.earned)) state.earned = parsed.earned.filter((n) => typeof n === 'string');
-    if (parsed.notes && typeof parsed.notes === 'object') state.notes = parsed.notes;
-    if (typeof parsed.spoiler === 'boolean') state.spoiler = parsed.spoiler;
-    if (typeof parsed.selected === 'string') state.selected = parsed.selected;
+    return cleanState(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null'));
   } catch {
     return blankState();
   }
-  return state;
 }
 
 export function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({
-    earned: state.earned,
-    notes: state.notes,
-    spoiler: state.spoiler,
-    selected: state.selected,
-  }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-export function loadTheme() {
-  const saved = localStorage.getItem(THEME_KEY);
-  return saved === 'light' || saved === 'dark' ? saved : 'dark';
-}
-
-export function saveTheme(theme) {
-  localStorage.setItem(THEME_KEY, theme);
+export function earnedSet(state) {
+  return new Set(state.earned);
 }
 
 export function isEarned(state, name) {
@@ -48,59 +78,55 @@ export function isEarned(state, name) {
 }
 
 export function toggleEarned(state, name) {
-  if (isEarned(state, name)) {
-    state.earned = state.earned.filter((n) => n !== name);
-  } else {
-    state.earned = [...state.earned, name];
-  }
+  const i = state.earned.indexOf(name);
+  if (i === -1) state.earned.push(name);
+  else state.earned.splice(i, 1);
   saveState(state);
+  return state;
 }
 
 export function setNote(state, name, text) {
-  if (text.trim() === '') delete state.notes[name];
-  else state.notes[name] = text;
+  if (text) state.notes[name] = text;
+  else delete state.notes[name];
   saveState(state);
+}
+
+export function setCount(state, name, value, target) {
+  const n = Math.max(0, Math.min(target ?? 999999, Math.floor(Number(value) || 0)));
+  if (n === 0) delete state.counts[name];
+  else state.counts[name] = n;
+  saveState(state);
+}
+
+export function getCount(state, name) {
+  return state.counts[name] ?? 0;
 }
 
 export function gradeCounts(trophies, state) {
-  const counts = { platinum: [0, 0], gold: [0, 0], silver: [0, 0], bronze: [0, 0] };
-  for (const trophy of trophies) {
-    counts[trophy.grade][1] += 1;
-    if (isEarned(state, trophy.name)) counts[trophy.grade][0] += 1;
+  const out = { platinum: [0, 0], gold: [0, 0], silver: [0, 0], bronze: [0, 0] };
+  for (const t of trophies) {
+    out[t.grade][1] += 1;
+    if (isEarned(state, t.name)) out[t.grade][0] += 1;
   }
-  return counts;
+  return out;
 }
 
-export function stageCounts(trophies, state, stage) {
-  const inStage = trophies.filter((t) => t.stage === stage);
-  return [inStage.filter((t) => isEarned(state, t.name)).length, inStage.length];
+export function exportText(state) {
+  return JSON.stringify(
+    { app: 'leonida-ledger-v4', exportedAt: new Date().toISOString(), earned: state.earned, notes: state.notes, counts: state.counts },
+    null,
+    2,
+  );
 }
 
-export function nextUp(trophies, state) {
-  const remaining = trophies.filter((t) => !isEarned(state, t.name));
-  if (remaining.length === 0) return 'Every trophy earned — Leonida Legend!';
-  const storyLeft = remaining.find((t) => t.kind === 'story');
-  if (storyLeft) {
-    if (state.spoiler && storyLeft.hidden) return 'a hidden story trophy';
-    return storyLeft.name;
-  }
-  return remaining[0].name;
+export function parseImport(text) {
+  const raw = JSON.parse(text);
+  if (!raw || typeof raw !== 'object') throw new Error('not an object');
+  const next = blankState();
+  if (Array.isArray(raw.earned)) next.earned = raw.earned.filter((n) => typeof n === 'string');
+  if (raw.notes && typeof raw.notes === 'object') next.notes = raw.notes;
+  if (raw.counts && typeof raw.counts === 'object') next.counts = raw.counts;
+  return cleanState(next);
 }
 
-export function exportFile(state) {
-  const blob = new Blob([JSON.stringify({ app: 'leonida-ledger', version: 3, earned: state.earned, notes: state.notes }, null, 2)], { type: 'application/json' });
-  const anchor = document.createElement('a');
-  anchor.href = URL.createObjectURL(blob);
-  anchor.download = 'leonida-ledger-progress.json';
-  anchor.click();
-  setTimeout(() => URL.revokeObjectURL(anchor.href), 1000);
-}
-
-export async function importFile(state, file) {
-  const parsed = JSON.parse(await file.text());
-  const incoming = Array.isArray(parsed) ? parsed : parsed.earned;
-  if (!Array.isArray(incoming)) throw new Error('Import file has no earned list.');
-  state.earned = incoming.filter((n) => typeof n === 'string');
-  if (parsed && typeof parsed === 'object' && parsed.notes && typeof parsed.notes === 'object') state.notes = parsed.notes;
-  saveState(state);
-}
+export { DEFAULT_STATE };

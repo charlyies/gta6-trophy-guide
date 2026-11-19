@@ -1,6 +1,19 @@
-// Leonida Ledger — filtering and the spoiler rule. Pure functions over the
-// trophy list and the saved state, so the tracker, the roadmap and the
-// missables page all agree about what is shown and what is hidden.
+// Leonida Ledger filters: kind chips, search, grade and earned filters, and the
+// spoiler rule that hides un-earned story trophies until they are earned.
+
+export const KIND_ORDER = [
+  'all',
+  'story',
+  'side',
+  'activities',
+  'crime',
+  'collectibles',
+  'money',
+  'odd',
+  'completion',
+  'platinum',
+  'missable',
+];
 
 export const KIND_LABELS = {
   all: 'All',
@@ -16,59 +29,67 @@ export const KIND_LABELS = {
   missable: 'Missable & at-risk',
 };
 
-export const KIND_ORDER = ['all', 'story', 'side', 'activities', 'crime', 'collectibles', 'money', 'odd', 'completion', 'platinum', 'missable'];
-
-export const STAGE_INFO = [
-  { stage: 1, title: 'Play the story — Chapters 1–4 + finale', text: 'Twelve trophies pop as you play. Keep a manual save at the start of every chapter. In Chapter 1, do Lucia\u2019s balcony meditation (see Missables). In Chapter 3, race Yago the moment his race appears. Character switching opens after Breakfast Run in Chapter 2 — learn it early, because the partner trophies need it.' },
-  { stage: 2, title: 'Side stories — strangers & friends', text: 'Seven trophies: the final mission for Andy, Kenton, Billy, Randy and Tyrone, Bret\u2019s hunt, and 8 stranger strands. Finales stay open after the story, so nothing here is rushed — except Yago\u2019s race in Stage 1. Andy\u2019s, Billy\u2019s and Tyrone\u2019s questlines do not count toward Strangers & Freaks; check that trophy\u2019s counter after each strand.' },
-  { stage: 3, title: 'Crime — robberies, heists & escapes', text: 'Nine trophies. Get the Snap Gun from Yasmani\u2019s Jewelry Jobs (Chapter 3) before Sneakthief. Unlock bank vaults through That\u2019s Where The Money Is (near the end of Chapter 4) and bring your partner — vault escapes also earn Hot Together. Every escape only counts once you have left the red heat zone, not just the flashing search area.' },
-  { stage: 4, title: 'Activities — races, ranges, stunts & the gym', text: 'Ten trophies. Gold all 42 Shooting Range challenges, win a Top Fun drone race at all 14 locations, win 20 different races, try each of the 9 activity types, and keep the stunt counter climbing — 250 for the trophy, 300 for 100%. Train Jason and Lucia to maximum Strength together for Personal Best.' },
-  { stage: 5, title: 'Collectibles & money — the long tail', text: 'Eight trophies. WAiNK It at 100 locations, discover 100 vehicles, meditate at all 18 spots, complete 3 card sets, launder $250,000 of Marked Bills, spend $100,000 in shops, buy all 8 garages and register 10 vehicles. Buy garages before registering cars — each car needs a free garage space.' },
-  { stage: 6, title: 'Odd moments, 100% & the platinum', text: 'Nine trophies. The seven odd moments, most of which pop while you play normally — six of them have no confirmed method at launch, and this guide says so honestly. Then A Long Road: the 100% checklist (300 stunts, 70 of 80 Challenges, 200 of 277 vehicles, all 8 vaults, all 39 illegal operations). Finish it and the platinum is yours.' },
-];
-
-export function countByKind(trophies) {
-  const counts = {};
-  for (const trophy of trophies) counts[trophy.kind] = (counts[trophy.kind] || 0) + 1;
-  counts.missable = trophies.filter((t) => t.missable || t.atRisk).length;
-  counts.all = trophies.length;
-  return counts;
+export function kindCount(trophies, kind) {
+  if (kind === 'all') return trophies.length;
+  if (kind === 'missable') return trophies.filter((t) => t.missable || t.atRisk).length;
+  return trophies.filter((t) => t.kind === kind).length;
 }
 
-// The spoiler rule: a hidden story trophy stays hidden until it is earned.
-export function isHiddenFromReader(trophy, state) {
-  return Boolean(state.spoiler && trophy.hidden && trophy.kind === 'story' && !isEarnedName(state, trophy.name));
+export function inKind(trophy, kind) {
+  if (kind === 'all') return true;
+  if (kind === 'missable') return Boolean(trophy.missable || trophy.atRisk);
+  return trophy.kind === kind;
 }
 
-function isEarnedName(state, name) {
-  return state.earned.includes(name);
+// A trophy is spoiler-hidden when the reader asked to hide story spoilers,
+// the trophy is part of the story, and it has not been earned yet.
+export function isSpoilerHidden(trophy, state) {
+  return Boolean(state.spoiler && trophy.kind === 'story' && !state.earned.includes(trophy.name));
 }
 
 export function displayName(trophy, state) {
-  if (isHiddenFromReader(trophy, state)) return 'Hidden trophy';
-  return trophy.name;
+  return isSpoilerHidden(trophy, state) ? 'Hidden story trophy' : trophy.name;
 }
 
 export function displayDescription(trophy, state) {
-  if (isHiddenFromReader(trophy, state)) return 'Hidden until earned — tick it off to reveal its name and description.';
-  return trophy.description;
+  return isSpoilerHidden(trophy, state)
+    ? 'Hidden until earned — complete the story to reveal this trophy.'
+    : trophy.description;
 }
 
-export function applyFilters(trophies, state, { query, grade, show, kind }) {
-  const needle = query.trim().toLowerCase();
-  return trophies.filter((trophy) => {
-    if (grade !== 'all' && trophy.grade !== grade) return false;
-    if (show === 'earned' && !isEarnedName(state, trophy.name)) return false;
-    if (show === 'remaining' && isEarnedName(state, trophy.name)) return false;
-    if (kind === 'missable') {
-      if (!trophy.missable && !trophy.atRisk) return false;
-    } else if (kind !== 'all' && trophy.kind !== kind) {
-      return false;
-    }
-    if (needle) {
-      const haystack = `${trophy.name} ${trophy.description} ${trophy.guide} ${trophy.kind}`.toLowerCase();
-      if (!haystack.includes(needle)) return false;
-    }
-    return true;
+export function matchesSearch(trophy, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const hay = [trophy.name, trophy.description, trophy.guide, trophy.kind, trophy.grade, trophy.sources]
+    .join(' ')
+    .toLowerCase();
+  return q.split(/\s+/).every((word) => hay.includes(word));
+}
+
+export function visibleTrophies(trophies, state) {
+  return trophies.filter((t) => {
+    if (!inKind(t, state.kind)) return false;
+    if (state.grade !== 'all' && t.grade !== state.grade) return false;
+    if (state.show === 'earned' && !state.earned.includes(t.name)) return false;
+    if (state.show === 'unearned' && state.earned.includes(t.name)) return false;
+    return matchesSearch(t, state.query);
   });
+}
+
+export function gradeLabel(grade) {
+  return grade.charAt(0).toUpperCase() + grade.slice(1);
+}
+
+// The next trophy the reader should chase: the first un-earned trophy in the
+// guide's play order. Spoiler-hidden when the spoiler setting hides it.
+export function nextUp(trophies, state) {
+  const next = trophies.find((t) => !state.earned.includes(t.name));
+  if (!next) return null;
+  if (isSpoilerHidden(next, state)) return { label: 'a hidden story trophy', hidden: true };
+  return { label: next.name, hidden: false };
+}
+
+export function stageProgress(stageTrophies, state) {
+  const earned = stageTrophies.filter((t) => state.earned.includes(t.name)).length;
+  return { earned, total: stageTrophies.length };
 }
