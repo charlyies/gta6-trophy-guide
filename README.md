@@ -1,46 +1,53 @@
-[![gta6-trophy-guide-01](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
-[![rank](https://make.fun/badge/gta6-trophy-guide-01/charlyies/gta6-trophy-guide/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
+# Leonida Ledger
+
+[![make.fun · gta6-trophy-guide-01](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
+[![rank](https://make.fun/badge/gta6-trophy-guide-01/charlyies/gta6-trophy-guide/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01/leaderboard)
 [![reward](https://make.fun/badge/gta6-trophy-guide-01/charlyies/gta6-trophy-guide/reward.svg)](https://make.fun/bounty/gta6-trophy-guide-01)
 
-# Leonida Ledger — Fourth Edition
+An offline guide and tracker for every trophy in Grand Theft Auto VI on PlayStation 5 — built for the [gta6-trophy-guide-01 bounty](https://make.fun/bounty/gta6-trophy-guide-01).
 
-An offline guide and tracker for the 55 PlayStation 5 trophies of **Grand Theft Auto VI**, built for the [make.fun bounty "Build the best GTA 6 trophy guide"](https://make.fun/bounty/gta6-trophy-guide-01) (`gta6-trophy-guide-01`).
+## What it covers
 
-## What it is
+All 55 PS5 trophies: 1 platinum, 2 gold, 6 silver, and 46 bronze. 28 of them are hidden on PlayStation until earned, and none of them require online play.
 
-- **Tracker for all 55 trophies** (1 Platinum, 2 Gold, 6 Silver, 46 Bronze; 28 hidden, 0 online), each shown with its official name, description and grade exactly as PlayStation publishes them.
-- **A guide in our own words for every trophy** — around 200 words each, each with its own Sources line. Where a method is not confirmed at launch, the guide says so instead of inventing one.
-- **Checklist saved in the browser** (localStorage), with **export to a file and import back**, per-trophy notes, and PSN progress counters for the trophies PlayStation tracks (250 stunts, 42 range golds, 100 WAiNK locations, and the rest).
-- **Search, grade and earned filters, and kind chips covering all 55** — Story 12, Side stories 7, Activities 10, Crime 9, Collectibles 4, Money 4, Odd moments 7, 100% completion 1, Platinum 1, plus a Missable & at-risk filter.
-- **Spoiler toggle** that really hides un-earned story trophies — name, description, roadmap chips and the "Next up" line all stay hidden until the trophy is earned.
-- **Six-stage roadmap to the platinum** (~200 hours, long rather than hard) with per-stage progress bars, and a **Missables page** for the one truly missable trophy (Positive Mental Attitude — Lucia's balcony meditation in Chapter 1) and the one at-risk trophy (Strangers & Freaks — the time-sensitive Yago race in Chapter 3).
-- **Dark-first theme with a working dark/light toggle**, persisted in the browser.
-- **Offline**: static files under `app/`, no build step, no network requests at run time.
+Every trophy shows its official name, description, and grade exactly as PlayStation publishes it, plus a guide written in our own words — what to do, where and how, and when it can be missed — with a Sources line beside each one so you can see where every fact came from.
 
-## Run it
+## The tracker
+
+- **Checklist** — tick trophies off as you earn them; progress is saved in your browser (localStorage) and survives a reload.
+- **Progress counters** — the trophies PlayStation tracks with a count (stunts, medals, and the rest) show your running total, e.g. 0/250, 0/42.
+- **Search** — find any trophy by name in a keystroke.
+- **Kind filters** — Story, Missable & at-risk, Collectibles, Activities, Crime, Side stories, Money.
+- **Spoiler toggle** — hides the names and descriptions of story trophies until you have earned them, so nothing is spoiled while you play.
+- **Notes** — add a personal note to any trophy.
+- **Export / import** — save your progress to a JSON file and bring it back on any machine.
+- **Platinum roadmap** — a 6-stage plan to the platinum, in the order to earn them, with a progress bar.
+- **Missables page** — every missable trophy in one place, with the chapter, mission, or moment where it can slip away.
+- **Sources page** — where the trophy list and the guides' facts come from, and an honest note wherever a launch-day detail is still unconfirmed.
+
+## Look and feel
+
+Dark-first theme with a working dark/light toggle. The whole app is plain static files under `app/` — no build step, no network requests at runtime, so it works with the network off.
+
+## How to use it
+
+Open `app/index.html` directly in a desktop browser, or serve the app folder and open it:
 
 ```sh
 node serve.ts
 ```
 
-Then open the address it prints (the local server, port 8080 by default). Or serve `app/` with any static file server.
+Then visit http://localhost:8080.
 
-## Verify it
+## Layout
 
-```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-```
+- `app/index.html` — the app shell
+- `app/app.js`, `app/store.js`, `app/filters.js` — tracker, saved progress, and filters
+- `app/style.css` — the dark-first theme
+- `app/data/trophies.json` — the 55 official trophies, each with its guide and Sources line
+- `screenshots/` — renders of the app in a real browser
+- `main.ts` — hands the guide in to make.fun
 
-That copies `app/` and `screenshots/` into `out/` and writes `out/dossier.json` with the vendored make.fun library.
+## License
 
-## Sources
-
-- Official names, descriptions, grades, hidden flags and PSN counters: **Exophase / PSNProfiles**, checked live 19 Nov 2026 (both agree on all 55).
-- Launch-week methods and counts: **OutputLag, GTA 6 trophy list, 19 Nov 2026**; **Push Square, GTA 6 trophy guide & roadmap, 19 Nov 2026**; **Planet GTA 6**; **GGRecon** (GTABase).
-- Honesty notes: five hidden trophies (In The Beginning…, Capital Offense, Bad Luck, I Guess, The Truth Is Out There, Ten Pin) have no confirmed unlock method at launch; the Personal Best method and the balcony-meditation link for Positive Mental Attitude are reported but unconfirmed. The guide says so in each case.
-
-## Notes
-
-- Unofficial fan guide. Grand Theft Auto VI is developed and published by Rockstar Games. No Rockstar logo, artwork, box art or game screenshot is used anywhere; the look is our own.
-- Trophy names and descriptions are shown as PlayStation publishes them; all guide text is written for this entry.
-- License: MIT (see `LICENSE`).
+MIT — see `LICENSE`.
